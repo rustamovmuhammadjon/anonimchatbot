@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+anonimbot.db
+anonimbot.db-journal
+anonimbot.db-wal
+anonimbot.db-shm
