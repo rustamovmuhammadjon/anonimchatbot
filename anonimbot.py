@@ -26,6 +26,7 @@ from aiogram.types import (
     ReplyKeyboardMarkup,
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
+from aiohttp import web
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -794,6 +795,18 @@ async def fallback(message: Message) -> None:
 # Entry point
 # ---------------------------------------------------------------------------
 
+async def run_health_server() -> None:
+    """Bind the PORT Render assigns so the free Web Service passes its health check."""
+    port = int(os.getenv("PORT", "8080"))
+    app = web.Application()
+    app.router.add_get("/", lambda request: web.Response(text="OK"))
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+    logger.info("Health-check server %s portda ishga tushdi.", port)
+
+
 async def setup_bot_profile(bot: Bot) -> None:
     await bot.set_my_commands(PUBLIC_COMMANDS)
     await bot.set_my_description(
@@ -813,6 +826,7 @@ async def main() -> None:
         raise RuntimeError("BOT_TOKEN topilmadi. .env faylida BOT_TOKEN qiymatini kiriting (.env.example ga qarang).")
 
     init_db()
+    await run_health_server()
 
     bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=MemoryStorage())

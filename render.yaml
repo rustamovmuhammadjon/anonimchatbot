@@ -1,14 +1,10 @@
 services:
-  - type: worker
+  - type: web
     name: anonimbot
     env: python
-    plan: starter
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: python anonimbot.py
-    disk:
-      name: anonimbot-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: BOT_TOKEN
         sync: false
@@ -16,5 +12,3 @@ services:
         sync: false
       - key: REVEAL_PRICE_STARS
         value: "50"
-      - key: DB_PATH
-        value: /data/anonimbot.db
